@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.SearchView;
 import android.widget.Spinner;
 
 import org.json.JSONArray;
@@ -28,6 +29,7 @@ import java.util.Iterator;
 public class MainActivity extends AppCompatActivity {
 
     Button toggleView, filter, random;
+    SearchView searchView;
     RecyclerView recyclerView;
     boolean gridView;
     ArrayList<Pokemon> pokemons;
@@ -133,6 +135,34 @@ public class MainActivity extends AppCompatActivity {
                         pokemonAdapter.notifyDataSetChanged();
                     }
         });
+
+        searchView = (SearchView) findViewById(R.id.searchView);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                ArrayList<Pokemon> searchedPokemon = searchPokemon(s);
+                pokemonAdapter.setPokemons(searchedPokemon);
+                pokemonAdapter.notifyDataSetChanged();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                ArrayList<Pokemon> searchedPokemon = searchPokemon(s);
+                pokemonAdapter.setPokemons(searchedPokemon);
+                pokemonAdapter.notifyDataSetChanged();
+                return true;
+            }
+        });
     }
 
+    public ArrayList<Pokemon> searchPokemon(String filter) {
+        ArrayList<Pokemon> searchPokemons = new ArrayList<>();
+        for (Pokemon pokemon : pokemons) {
+            if (pokemon.getName().toLowerCase().startsWith(filter.toLowerCase()) || pokemon.getNumber().startsWith(filter)) {
+                searchPokemons.add(pokemon);
+            }
+        }
+        return searchPokemons;
+    }
 }
